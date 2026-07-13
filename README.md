@@ -6,6 +6,10 @@ no data leaves your machine except optional live model-pricing lookups.
 
 ![Claude Code Stats dashboard in Grafana](docs/dashboard.png)
 
+Plus a live, per-minute view with burn-rate and cost-per-hour gauges:
+
+![Per-minute token usage with burn-rate and cost gauges](docs/dashboard-live.png)
+
 ## How it works
 
 - **`ccusage-http`** — a tiny Node bridge that runs `ccusage` against your
