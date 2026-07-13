@@ -22,7 +22,7 @@ The dashboard talks to the bridge over Docker's internal network
 ## Run it
 
 ```bash
-git clone <your-repo-url> claude-monitor
+git clone git@github.com:johnathafelix/claude-monitor.git
 cd claude-monitor
 docker compose up -d
 ```
