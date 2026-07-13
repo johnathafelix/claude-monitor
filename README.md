@@ -4,6 +4,8 @@ A local Grafana dashboard for your Claude Code token usage and cost, built on
 [`ccusage`](https://github.com/ryoppippi/ccusage). Everything runs in Docker —
 no data leaves your machine except optional live model-pricing lookups.
 
+![Claude Code Stats dashboard in Grafana](docs/dashboard.png)
+
 ## How it works
 
 - **`ccusage-http`** — a tiny Node bridge that runs `ccusage` against your
