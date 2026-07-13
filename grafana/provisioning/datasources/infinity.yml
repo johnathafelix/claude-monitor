@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: ccusage
+    type: yesoreyeram-infinity-datasource
+    uid: infinity-ccusage
+    access: proxy
+    isDefault: true
+    editable: true

@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Local Claude Code / tooling state (machine-specific, not shared)
+.claude/settings.local.json
+.code-review-graph/
+
+# Editor
+.vscode/

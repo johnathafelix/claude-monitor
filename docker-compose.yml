@@ -1,0 +1,40 @@
+services:
+  # ccusage -> JSON bridge. Reads the same ~/.claude logs the old cc-exporter did
+  # and republishes them as Grafana-friendly JSON on :3001.
+  ccusage-http:
+    build: ./ccusage-http
+    container_name: ccusage-http
+    restart: unless-stopped
+    volumes:
+      # Map your host Claude logs folder read-only. ccusage expects a `projects/`
+      # dir inside CLAUDE_CONFIG_DIR. The per-minute view parses these directly.
+      # ${HOME} resolves per-machine, so this repo is portable across machines.
+      - ${HOME}/.claude:/data/claude:ro
+    environment:
+      - CLAUDE_CONFIG_DIR=/data/claude
+      # Live LiteLLM pricing (needs egress) so brand-new models are priced;
+      # the bridge auto-falls back to the bundled snapshot if the fetch fails.
+      # Set to 1 to force offline.
+      - CCUSAGE_OFFLINE=0
+      - CACHE_TTL_SECONDS=30
+    ports:
+      - "3001:3001"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    depends_on:
+      - ccusage-http
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+volumes:
+  grafana-storage:

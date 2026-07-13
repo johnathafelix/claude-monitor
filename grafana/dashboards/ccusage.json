@@ -1,0 +1,493 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["ccusage", "claude-code"],
+  "templating": {
+    "list": [
+      {
+        "name": "model",
+        "label": "Model",
+        "type": "query",
+        "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+        "definition": "ccusage model names",
+        "query": {
+          "queryType": "infinity",
+          "infinityQuery": {
+            "refId": "variable",
+            "type": "json",
+            "source": "url",
+            "format": "table",
+            "url": "http://ccusage-http:3001/model-names",
+            "url_options": { "method": "GET" },
+            "root_selector": "",
+            "columns": [{ "selector": ".", "text": "model", "type": "string" }]
+          }
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": "all",
+        "multi": false,
+        "current": { "text": "All", "value": "$__all", "selected": true },
+        "options": [],
+        "sort": 1
+      }
+    ]
+  },
+  "time": { "from": "now-30d", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Claude Code Stats (ccusage)",
+  "uid": "ccusage-stats",
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Tokens",
+      "gridPos": { "h": 6, "w": 5, "x": 0, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/summary?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "totalTokens", "text": "Total Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Input Tokens",
+      "gridPos": { "h": 6, "w": 5, "x": 5, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/summary?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "inputTokens", "text": "Input Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "blue" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Output Tokens",
+      "gridPos": { "h": 6, "w": 5, "x": 10, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/summary?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "outputTokens", "text": "Output Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Cache Read",
+      "gridPos": { "h": 6, "w": 5, "x": 15, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/summary?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "cacheReadTokens", "text": "Cache Read", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "purple" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Total Cost",
+      "gridPos": { "h": 6, "w": 4, "x": 20, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/summary?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "totalCost", "text": "Total Cost", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD", "color": { "mode": "fixed", "fixedColor": "orange" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 10,
+      "type": "piechart",
+      "title": "Token Distribution by Type",
+      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 6 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/types?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "type", "text": "type", "type": "string" },
+            { "selector": "tokens", "text": "tokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Token Usage Over Time (daily)",
+      "description": "Daily totals over the last 30 days, independent of the dashboard time range. Use the per-minute panel for sub-day windows.",
+      "gridPos": { "h": 9, "w": 16, "x": 8, "y": 6 },
+      "timeFrom": "30d",
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "timeseries",
+          "url": "http://ccusage-http:3001/timeseries?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "time", "text": "time", "type": "timestamp", "timestampFormat": "YYYY-MM-DD" },
+            { "selector": "cacheCreation", "text": "cacheCreation", "type": "number" },
+            { "selector": "cacheRead", "text": "cacheRead", "type": "number" },
+            { "selector": "input", "text": "input", "type": "number" },
+            { "selector": "output", "text": "output", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "showPoints": "never",
+            "lineWidth": 1,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
+      "id": 12,
+      "type": "piechart",
+      "title": "Tokens by Model",
+      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 15 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/models?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "model", "type": "string" },
+            { "selector": "totalTokens", "text": "totalTokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "pie",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "Usage by Model",
+      "gridPos": { "h": 9, "w": 16, "x": 8, "y": 15 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/models?since=${__from:date:YYYYMMDD}&until=${__to:date:YYYYMMDD}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "Model", "type": "string" },
+            { "selector": "totalTokens", "text": "Total Tokens", "type": "number" },
+            { "selector": "inputTokens", "text": "Input", "type": "number" },
+            { "selector": "outputTokens", "text": "Output", "type": "number" },
+            { "selector": "cacheReadTokens", "text": "Cache Read", "type": "number" },
+            { "selector": "cacheCreationTokens", "text": "Cache Write", "type": "number" },
+            { "selector": "cost", "text": "Cost", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "align": "auto" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Cost" },
+            "properties": [{ "id": "unit", "value": "currencyUSD" }]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "displayName": "Total Tokens", "desc": true }]
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Token Usage (per-minute, live)",
+      "description": "Sampled once a minute from the active block; history accrues while the bridge runs.",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 24 },
+      "timeFrom": "6h",
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "timeseries",
+          "url": "http://ccusage-http:3001/blocks-series?from=${__from}&to=${__to}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "time", "text": "time", "type": "timestamp" },
+            { "selector": "cacheCreation", "text": "cacheCreation", "type": "number" },
+            { "selector": "cacheRead", "text": "cacheRead", "type": "number" },
+            { "selector": "input", "text": "input", "type": "number" },
+            { "selector": "output", "text": "output", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "showPoints": "never",
+            "lineWidth": 1,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
+      "id": 20,
+      "type": "gauge",
+      "title": "Burn Rate (tokens/min)",
+      "description": "Live from the active block's burnRate (all models).",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 33 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/burnrate",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "tokensPerMinute", "text": "tokens/min", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 1000000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 300000 },
+              { "color": "red", "value": 700000 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 21,
+      "type": "gauge",
+      "title": "Cost / hour",
+      "description": "Live from the active block's burnRate (all models).",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 33 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://ccusage-http:3001/burnrate",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "costPerHour", "text": "$/hour", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 30 },
+              { "color": "red", "value": 60 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
+    }
+  ]
+}
