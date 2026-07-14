@@ -1,0 +1,26 @@
+# Receives OTLP metrics pushed by Claude Code (CLAUDE_CODE_ENABLE_TELEMETRY=1)
+# and re-exposes them on :8889 for Prometheus to scrape.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    # Sessions stop pushing when they exit; drop their series from the scrape
+    # after 5m of silence. Prometheus keeps the history either way.
+    metric_expiration: 5m
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]

@@ -20,12 +20,42 @@ services:
     ports:
       - "3001:3001"
 
+  # OTLP sink for Claude Code's built-in telemetry (CLAUDE_CODE_ENABLE_TELEMETRY=1).
+  # Captures ALL client-side counted usage — including background/classifier calls
+  # that never reach the ~/.claude transcript logs — and exposes it for Prometheus.
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yml"]
+    volumes:
+      - ./otel/otel-collector.yml:/etc/otelcol/config.yml:ro
+    ports:
+      - "4317:4317" # OTLP gRPC (Claude Code pushes here from the host)
+      - "4318:4318" # OTLP HTTP
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    depends_on:
+      - otel-collector
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=180d
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
     depends_on:
       - ccusage-http
+      - prometheus
     ports:
       - "3000:3000"
     environment:
@@ -38,3 +68,4 @@ services:
 
 volumes:
   grafana-storage:
+  prometheus-data:
