@@ -66,7 +66,7 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } },
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "red" } },
         "overrides": []
       },
       "options": {
@@ -98,7 +98,7 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "blue" } },
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "blue" } },
         "overrides": []
       },
       "options": {
@@ -130,7 +130,7 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } },
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "green" } },
         "overrides": []
       },
       "options": {
@@ -162,7 +162,7 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "purple" } },
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "purple" } },
         "overrides": []
       },
       "options": {

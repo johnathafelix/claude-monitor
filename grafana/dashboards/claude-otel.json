@@ -44,11 +44,12 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "unit": "si:",
           "color": {
             "mode": "fixed",
             "fixedColor": "red"
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -93,11 +94,12 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "unit": "si:",
           "color": {
             "mode": "fixed",
             "fixedColor": "blue"
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -142,11 +144,12 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "unit": "si:",
           "color": {
             "mode": "fixed",
             "fixedColor": "green"
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -191,11 +194,12 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "unit": "si:",
           "color": {
             "mode": "fixed",
             "fixedColor": "purple"
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
