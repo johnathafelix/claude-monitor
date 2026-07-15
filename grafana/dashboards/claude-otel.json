@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "Live per-model usage from Claude Code's built-in OpenTelemetry export. Includes background/auxiliary calls (e.g. the auto-mode classifier) that never appear in the transcript logs. Only records sessions started after telemetry was enabled — for history, see the ccusage dashboard. Totals are cumulative per session, summed over sessions that reported within the selected range.",
+  "description": "Live per-model usage from Claude Code's built-in OpenTelemetry export. Includes background/auxiliary calls (e.g. the auto-mode classifier) that never appear in the transcript logs. Only records sessions started after telemetry was enabled — for history, see the ccusage dashboard. Range totals count tokens consumed within the selected time window (per-counter increase); very short sessions can be slightly under-counted.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -67,7 +67,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum(increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -117,7 +117,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
+          "expr": "sum(increase(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -167,7 +167,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
+          "expr": "sum(increase(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -217,7 +217,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
+          "expr": "sum(increase(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -267,7 +267,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum(increase(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -316,7 +316,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (type) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (type) (increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "legendFormat": "{{type}}",
           "instant": true,
           "range": false
@@ -431,7 +431,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "legendFormat": "{{model}}",
           "instant": true,
           "range": false
@@ -492,7 +492,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -503,7 +503,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -514,7 +514,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -525,7 +525,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -536,7 +536,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_token_usage_tokens_total{type=\"cacheCreation\", model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -547,7 +547,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -648,7 +648,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (query_source) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (query_source) (increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "legendFormat": "{{query_source}}",
           "instant": true,
           "range": false
@@ -763,7 +763,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
+          "expr": "sum by (model) (increase(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
           "legendFormat": "{{model}}",
           "instant": true,
           "range": false
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 6
+  "version": 7
 }
