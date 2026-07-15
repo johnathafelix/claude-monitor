@@ -301,7 +301,7 @@
       "title": "Token Distribution by Type",
       "gridPos": {
         "h": 9,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 6
       },
@@ -362,9 +362,9 @@
       "title": "Token Throughput by Type (tokens/min)",
       "gridPos": {
         "h": 9,
-        "w": 16,
-        "x": 8,
-        "y": 6
+        "w": 24,
+        "x": 0,
+        "y": 15
       },
       "datasource": {
         "type": "prometheus",
@@ -416,9 +416,9 @@
       "title": "Tokens by Model",
       "gridPos": {
         "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 15
+        "w": 6,
+        "x": 6,
+        "y": 6
       },
       "datasource": {
         "type": "prometheus",
@@ -477,9 +477,9 @@
       "title": "Usage by Model",
       "gridPos": {
         "h": 9,
-        "w": 16,
-        "x": 8,
-        "y": 15
+        "w": 24,
+        "x": 0,
+        "y": 33
       },
       "datasource": {
         "type": "prometheus",
@@ -633,9 +633,9 @@
       "description": "auxiliary = background calls such as the auto-mode classifier — the usage the transcript logs (and ccusage) never see.",
       "gridPos": {
         "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 24
+        "w": 6,
+        "x": 12,
+        "y": 6
       },
       "datasource": {
         "type": "prometheus",
@@ -694,8 +694,8 @@
       "title": "Token Throughput by Model (tokens/min)",
       "gridPos": {
         "h": 9,
-        "w": 16,
-        "x": 8,
+        "w": 24,
+        "x": 0,
         "y": 24
       },
       "datasource": {
@@ -747,10 +747,10 @@
       "type": "piechart",
       "title": "Cost by Model",
       "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 33
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 6
       },
       "datasource": {
         "type": "prometheus",
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 7
+  "version": 8
 }
