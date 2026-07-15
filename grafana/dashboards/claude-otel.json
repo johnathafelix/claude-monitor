@@ -807,7 +807,7 @@
       "id": 13,
       "type": "gauge",
       "title": "Burn Rate (tokens/min)",
-      "description": "Live token throughput across the selected model(s), summed over all sources.",
+      "description": "Rolling 1-hour average token rate across the selected model(s), summed over all sources. Independent of the dashboard time range.",
       "gridPos": {
         "h": 8,
         "w": 6,
@@ -825,7 +825,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__rate_interval]) * 60)",
+          "expr": "sum(increase(claude_code_token_usage_tokens_total{model=~\"$model\"}[1h])) / 60",
           "instant": true,
           "range": false
         }
@@ -870,7 +870,7 @@
       "id": 14,
       "type": "gauge",
       "title": "Cost / hour",
-      "description": "Live spend rate across the selected model(s), projected to an hourly rate.",
+      "description": "Spend over the last rolling hour across the selected model(s). Independent of the dashboard time range.",
       "gridPos": {
         "h": 8,
         "w": 6,
@@ -888,7 +888,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__rate_interval]) * 3600)",
+          "expr": "sum(increase(claude_code_cost_usage_USD_total{model=~\"$model\"}[1h]))",
           "instant": true,
           "range": false
         }
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 4
+  "version": 5
 }
