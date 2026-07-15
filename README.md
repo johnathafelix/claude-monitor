@@ -34,7 +34,11 @@ The dashboard talks to the bridge over Docker's internal network
 | Latency | ~30s cache over log files | Export interval (10s) |
 
 Keep using the ccusage dashboard for history; the OTel dashboard is the live,
-complete view going forward.
+complete view going forward. It mirrors the ccusage dashboard's cards, charts,
+and layout — with a per-model filter, a live burn-rate/cost gauge pair, and a
+`query_source` breakdown that surfaces the background/classifier usage:
+
+![Claude Code Live (OTel) dashboard in Grafana](docs/dashboard-otel.png)
 
 ### Enabling Claude Code telemetry
 
