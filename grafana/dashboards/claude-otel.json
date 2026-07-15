@@ -344,7 +344,7 @@
         },
         "legend": {
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "values": [
             "value",
             "percent"
@@ -459,7 +459,7 @@
         },
         "legend": {
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "values": [
             "value",
             "percent"
@@ -676,7 +676,7 @@
         },
         "legend": {
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "values": [
             "value",
             "percent"
@@ -791,7 +791,7 @@
         },
         "legend": {
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "values": [
             "value",
             "percent"
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 8
+  "version": 9
 }
