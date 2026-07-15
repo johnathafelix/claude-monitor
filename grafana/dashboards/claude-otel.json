@@ -744,7 +744,7 @@
     },
     {
       "id": 12,
-      "type": "bargauge",
+      "type": "piechart",
       "title": "Cost by Model",
       "gridPos": {
         "h": 8,
@@ -772,22 +772,35 @@
       "fieldConfig": {
         "defaults": {
           "unit": "currencyUSD",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "orange"
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           }
         },
         "overrides": []
       },
       "options": {
+        "pieType": "pie",
         "reduceOptions": {
           "calc": "lastNotNull",
           "fields": "",
           "values": false
         },
-        "orientation": "horizontal",
-        "displayMode": "basic",
-        "showUnfilled": true
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       }
     },
     {
@@ -932,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 3
+  "version": 4
 }
