@@ -52,8 +52,8 @@
       "title": "Total Tokens",
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 0,
+        "w": 4,
+        "x": 8,
         "y": 0
       },
       "datasource": {
@@ -102,8 +102,8 @@
       "title": "Input Tokens",
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 5,
+        "w": 3,
+        "x": 12,
         "y": 0
       },
       "datasource": {
@@ -152,8 +152,8 @@
       "title": "Output Tokens",
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 10,
+        "w": 3,
+        "x": 15,
         "y": 0
       },
       "datasource": {
@@ -202,8 +202,8 @@
       "title": "Cache Read",
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 15,
+        "w": 3,
+        "x": 18,
         "y": 0
       },
       "datasource": {
@@ -252,8 +252,8 @@
       "title": "Total Cost",
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 20,
+        "w": 3,
+        "x": 21,
         "y": 0
       },
       "datasource": {
@@ -748,7 +748,7 @@
       "title": "Cost by Model",
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 33
       },
@@ -809,10 +809,10 @@
       "title": "Burn Rate (tokens/min)",
       "description": "Rolling 1-hour average token rate across the selected model(s), summed over all sources. Independent of the dashboard time range.",
       "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 33
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 0
       },
       "datasource": {
         "type": "prometheus",
@@ -872,10 +872,10 @@
       "title": "Cost / hour",
       "description": "Spend over the last rolling hour across the selected model(s). Independent of the dashboard time range.",
       "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 33
+        "h": 6,
+        "w": 4,
+        "x": 4,
+        "y": 0
       },
       "datasource": {
         "type": "prometheus",
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 5
+  "version": 6
 }
