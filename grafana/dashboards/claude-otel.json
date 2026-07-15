@@ -362,7 +362,7 @@
       "title": "Token Throughput by Type (tokens/min)",
       "gridPos": {
         "h": 9,
-        "w": 24,
+        "w": 12,
         "x": 0,
         "y": 15
       },
@@ -479,7 +479,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 24
       },
       "datasource": {
         "type": "prometheus",
@@ -694,9 +694,9 @@
       "title": "Token Throughput by Model (tokens/min)",
       "gridPos": {
         "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 24
+        "w": 12,
+        "x": 12,
+        "y": 15
       },
       "datasource": {
         "type": "prometheus",
@@ -945,5 +945,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 9
+  "version": 10
 }
