@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "Live per-model usage from Claude Code's built-in OpenTelemetry export. Includes background/auxiliary calls (e.g. the auto-mode classifier) that never appear in the transcript logs. Only records sessions started after telemetry was enabled \u2014 for history, see the ccusage dashboard. Totals are cumulative per session, summed over sessions that reported within the selected range.",
+  "description": "Live per-model usage from Claude Code's built-in OpenTelemetry export. Includes background/auxiliary calls (e.g. the auto-mode classifier) that never appear in the transcript logs. Only records sessions started after telemetry was enabled — for history, see the ccusage dashboard. Totals are cumulative per session, summed over sessions that reported within the selected range.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -15,6 +15,36 @@
     }
   ],
   "liveNow": true,
+  "templating": {
+    "list": [
+      {
+        "name": "model",
+        "label": "Model",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(claude_code_token_usage_tokens_total, model)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(claude_code_token_usage_tokens_total, model)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": false,
+        "current": {
+          "text": "All",
+          "value": "$__all",
+          "selected": true
+        },
+        "options": [],
+        "sort": 1
+      }
+    ]
+  },
   "panels": [
     {
       "id": 1,
@@ -37,7 +67,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total[$__range]))",
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -87,7 +117,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"input\"}[$__range]))",
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -137,7 +167,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"output\"}[$__range]))",
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -187,7 +217,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\"}[$__range]))",
+          "expr": "sum(last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -237,7 +267,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total[$__range]))",
+          "expr": "sum(last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
           "instant": true,
           "range": false
         }
@@ -268,7 +298,7 @@
     {
       "id": 6,
       "type": "piechart",
-      "title": "Tokens by Model",
+      "title": "Token Distribution by Type",
       "gridPos": {
         "h": 9,
         "w": 8,
@@ -286,25 +316,32 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total[$__range]))",
-          "legendFormat": "{{model}}",
+          "expr": "sum by (type) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "legendFormat": "{{type}}",
           "instant": true,
           "range": false
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "short",
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
         },
         "overrides": []
       },
       "options": {
+        "pieType": "donut",
         "reduceOptions": {
           "calc": "lastNotNull",
           "fields": "",
           "values": false
         },
-        "pieType": "pie",
         "legend": {
           "displayMode": "table",
           "placement": "right",
@@ -314,7 +351,8 @@
           ]
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       }
     },
@@ -339,7 +377,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (type) (rate(claude_code_token_usage_tokens_total[$__rate_interval]) * 60)",
+          "expr": "sum by (type) (rate(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__rate_interval]) * 60)",
           "legendFormat": "{{type}}",
           "range": true
         }
@@ -375,8 +413,7 @@
     {
       "id": 8,
       "type": "piechart",
-      "title": "Tokens by Source (main / subagent / auxiliary)",
-      "description": "auxiliary = background calls such as the auto-mode classifier \u2014 the usage the transcript logs (and ccusage) never see.",
+      "title": "Tokens by Model",
       "gridPos": {
         "h": 9,
         "w": 8,
@@ -394,25 +431,32 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (query_source) (last_over_time(claude_code_token_usage_tokens_total[$__range]))",
-          "legendFormat": "{{query_source}}",
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "legendFormat": "{{model}}",
           "instant": true,
           "range": false
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "short",
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          }
         },
         "overrides": []
       },
       "options": {
+        "pieType": "pie",
         "reduceOptions": {
           "calc": "lastNotNull",
           "fields": "",
           "values": false
         },
-        "pieType": "pie",
         "legend": {
           "displayMode": "table",
           "placement": "right",
@@ -422,14 +466,15 @@
           ]
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       }
     },
     {
       "id": 9,
       "type": "table",
-      "title": "Usage by Model \u00d7 Type",
+      "title": "Usage by Model",
       "gridPos": {
         "h": 9,
         "w": 16,
@@ -447,7 +492,62 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model, type) (last_over_time(claude_code_token_usage_tokens_total[$__range]))",
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"input\", model=~\"$model\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"output\", model=~\"$model\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheRead\", model=~\"$model\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_token_usage_tokens_total{type=\"cacheCreation\", model=~\"$model\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "range": false
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
           "format": "table",
           "instant": true,
           "range": false
@@ -455,21 +555,42 @@
       ],
       "transformations": [
         {
-          "id": "organize",
+          "id": "joinByField",
           "options": {
-            "excludeByName": {
-              "Time": true
-            },
-            "indexByName": {},
-            "renameByName": {}
+            "byField": "model",
+            "mode": "outer"
           }
         },
         {
-          "id": "groupingToMatrix",
+          "id": "filterFieldsByName",
           "options": {
-            "columnField": "type",
-            "rowField": "model",
-            "valueField": "Value"
+            "include": {
+              "pattern": "^(model|Value #.*)$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "model": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6
+            },
+            "renameByName": {
+              "model": "Model",
+              "Value #A": "Total Tokens",
+              "Value #B": "Input",
+              "Value #C": "Output",
+              "Value #D": "Cache Read",
+              "Value #E": "Cache Write",
+              "Value #F": "Cost"
+            }
           }
         }
       ],
@@ -478,23 +599,41 @@
           "unit": "short",
           "custom": {
             "align": "auto"
-          },
-          "noValue": "0"
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "displayName": "Total Tokens",
+            "desc": true
+          }
+        ]
       }
     },
     {
       "id": 10,
-      "type": "bargauge",
-      "title": "Cost by Model",
+      "type": "piechart",
+      "title": "Tokens by Source (main / subagent / auxiliary)",
+      "description": "auxiliary = background calls such as the auto-mode classifier — the usage the transcript logs (and ccusage) never see.",
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 9,
+        "w": 8,
         "x": 0,
         "y": 24
       },
@@ -509,31 +648,44 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total[$__range]))",
-          "legendFormat": "{{model}}",
+          "expr": "sum by (query_source) (last_over_time(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__range]))",
+          "legendFormat": "{{query_source}}",
           "instant": true,
           "range": false
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "currencyUSD",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "orange"
+          "unit": "short",
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           }
         },
         "overrides": []
       },
       "options": {
+        "pieType": "pie",
         "reduceOptions": {
           "calc": "lastNotNull",
           "fields": "",
           "values": false
         },
-        "orientation": "horizontal",
-        "displayMode": "basic",
-        "showUnfilled": true
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       }
     },
     {
@@ -541,9 +693,9 @@
       "type": "timeseries",
       "title": "Token Throughput by Model (tokens/min)",
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
+        "h": 9,
+        "w": 16,
+        "x": 8,
         "y": 24
       },
       "datasource": {
@@ -557,7 +709,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (model) (rate(claude_code_token_usage_tokens_total[$__rate_interval]) * 60)",
+          "expr": "sum by (model) (rate(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__rate_interval]) * 60)",
           "legendFormat": "{{model}}",
           "range": true
         }
@@ -589,17 +741,189 @@
           "sort": "desc"
         }
       }
+    },
+    {
+      "id": 12,
+      "type": "bargauge",
+      "title": "Cost by Model",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (model) (last_over_time(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__range]))",
+          "legendFormat": "{{model}}",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calc": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "showUnfilled": true
+      }
+    },
+    {
+      "id": 13,
+      "type": "gauge",
+      "title": "Burn Rate (tokens/min)",
+      "description": "Live token throughput across the selected model(s), summed over all sources.",
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 33
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(claude_code_token_usage_tokens_total{model=~\"$model\"}[$__rate_interval]) * 60)",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 1000000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 300000
+              },
+              {
+                "color": "red",
+                "value": 700000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calc": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 14,
+      "type": "gauge",
+      "title": "Cost / hour",
+      "description": "Live spend rate across the selected model(s), projected to an hourly rate.",
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 33
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(claude_code_cost_usage_USD_total{model=~\"$model\"}[$__rate_interval]) * 3600)",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calc": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
     }
   ],
   "refresh": "10s",
   "schemaVersion": 39,
   "tags": [
     "claude",
+    "claude-code",
     "otel"
   ],
-  "templating": {
-    "list": []
-  },
   "time": {
     "from": "now-6h",
     "to": "now"
@@ -608,5 +932,5 @@
   "timezone": "",
   "title": "Claude Code Live (OTel)",
   "uid": "claude-otel",
-  "version": 2
+  "version": 3
 }
