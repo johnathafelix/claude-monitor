@@ -50,7 +50,7 @@
       "id": 1,
       "type": "stat",
       "title": "Total Tokens",
-      "gridPos": { "h": 6, "w": 5, "x": 0, "y": 0 },
+      "gridPos": { "h": 6, "w": 4, "x": 8, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -82,7 +82,7 @@
       "id": 2,
       "type": "stat",
       "title": "Input Tokens",
-      "gridPos": { "h": 6, "w": 5, "x": 5, "y": 0 },
+      "gridPos": { "h": 6, "w": 3, "x": 12, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -114,7 +114,7 @@
       "id": 3,
       "type": "stat",
       "title": "Output Tokens",
-      "gridPos": { "h": 6, "w": 5, "x": 10, "y": 0 },
+      "gridPos": { "h": 6, "w": 3, "x": 15, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -146,7 +146,7 @@
       "id": 4,
       "type": "stat",
       "title": "Cache Read",
-      "gridPos": { "h": 6, "w": 5, "x": 15, "y": 0 },
+      "gridPos": { "h": 6, "w": 3, "x": 18, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -178,7 +178,7 @@
       "id": 5,
       "type": "stat",
       "title": "Total Cost",
-      "gridPos": { "h": 6, "w": 4, "x": 20, "y": 0 },
+      "gridPos": { "h": 6, "w": 3, "x": 21, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -210,7 +210,7 @@
       "id": 10,
       "type": "piechart",
       "title": "Token Distribution by Type",
-      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 6 },
+      "gridPos": { "h": 9, "w": 6, "x": 0, "y": 6 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -235,7 +235,7 @@
       "options": {
         "pieType": "donut",
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
-        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
         "tooltip": { "mode": "single", "sort": "none" }
       }
     },
@@ -244,7 +244,7 @@
       "type": "timeseries",
       "title": "Token Usage Over Time (daily)",
       "description": "Daily totals over the last 30 days, independent of the dashboard time range. Use the per-minute panel for sub-day windows.",
-      "gridPos": { "h": 9, "w": 16, "x": 8, "y": 6 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 15 },
       "timeFrom": "30d",
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
@@ -288,7 +288,7 @@
       "id": 12,
       "type": "piechart",
       "title": "Tokens by Model",
-      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 15 },
+      "gridPos": { "h": 9, "w": 6, "x": 6, "y": 6 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -313,7 +313,7 @@
       "options": {
         "pieType": "pie",
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
-        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
         "tooltip": { "mode": "single", "sort": "none" }
       }
     },
@@ -321,7 +321,7 @@
       "id": 13,
       "type": "table",
       "title": "Usage by Model",
-      "gridPos": { "h": 9, "w": 16, "x": 8, "y": 15 },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 24 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -363,7 +363,7 @@
       "type": "timeseries",
       "title": "Token Usage (per-minute, live)",
       "description": "Sampled once a minute from the active block; history accrues while the bridge runs.",
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 24 },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 6 },
       "timeFrom": "6h",
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
@@ -408,7 +408,7 @@
       "type": "gauge",
       "title": "Burn Rate (tokens/min)",
       "description": "Live from the active block's burnRate (all models).",
-      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 33 },
+      "gridPos": { "h": 6, "w": 4, "x": 0, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
@@ -451,7 +451,7 @@
       "type": "gauge",
       "title": "Cost / hour",
       "description": "Live from the active block's burnRate (all models).",
-      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 33 },
+      "gridPos": { "h": 6, "w": 4, "x": 4, "y": 0 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-ccusage" },
       "targets": [
         {
