@@ -21,17 +21,38 @@ Plus a live, per-minute view with burn-rate and cost-per-hour gauges:
   shown on the **Claude Code Live (OTel)** dashboard. Unlike the transcript
   logs, this path counts *every* API request the client makes — including
   background/auxiliary calls such as the auto-mode classifier.
+- **`usage-archive` + `mongo`** — a background ingestor that archives *all*
+  `~/.claude` data into MongoDB (persistent volumes) and serves the
+  **Claude Code Archive (Mongo)** dashboard from indexed queries on port
+  `3002`. Every transcript line of every session — including subagent
+  transcripts and their meta files, plus `stats-cache.json`, `history.jsonl`
+  and `metrics/events/` — is stored raw, so history survives Claude Code's
+  ~30-day transcript retention and future dashboards can be built without
+  re-parsing files. Usage metrics are deduped by `message.id:requestId` (the
+  same rule ccusage applies) and costs are computed from **dated** LiteLLM
+  pricing snapshots persisted in Mongo — past usage keeps the price that was
+  in effect at the time, and new models get re-priced automatically once
+  LiteLLM publishes their rates.
 
-The dashboard talks to the bridge over Docker's internal network
-(`http://ccusage-http:3001`), so nothing is hardcoded to a specific machine.
+The dashboards talk to the bridges over Docker's internal network
+(`http://ccusage-http:3001`, `http://usage-archive:3002`), so nothing is
+hardcoded to a specific machine.
 
-## Two data sources, two dashboards
+## Three data sources, three dashboards
 
-| | ccusage (transcripts) | OTel (client telemetry) |
-|---|---|---|
-| History | Full (as far back as your logs go) | Only sessions started after enabling |
-| Background/classifier calls | Missing | Included (`query_source="auxiliary"`) |
-| Latency | ~30s cache over log files | Export interval (10s) |
+| | ccusage (transcripts) | OTel (client telemetry) | Archive (Mongo) |
+|---|---|---|---|
+| History | As far back as your logs go | Only sessions started after enabling | Everything ever ingested (survives log retention) |
+| Background/classifier calls | Missing | Included (`query_source="auxiliary"`) | Missing (not in transcripts) |
+| Subagent breakdown | No | main/subagent split | main/subagent + per-agent-type |
+| Latency | ~30s cache over log files | Export interval (10s) | ≤60s scan interval |
+| Query cost | Re-parses logs per refresh | Prometheus TSDB | Indexed Mongo aggregations |
+
+The Archive dashboard mirrors the OTel dashboard's layout and adds a live
+model-pricing table. Mongo is reachable from the host at
+`mongodb://127.0.0.1:37017/usage_archive?directConnection=true` for ad-hoc
+queries (mongosh/Compass); the raw per-line archive lives in `raw_entries`,
+deduped billable events in `usage_events`.
 
 Keep using the ccusage dashboard for history; the OTel dashboard is the live,
 complete view going forward. It mirrors the ccusage dashboard's cards, charts,

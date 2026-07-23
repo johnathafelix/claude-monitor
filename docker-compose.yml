@@ -66,6 +66,43 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
 
+  # Persistent archive of the ~/.claude transcripts. Survives Claude Code's
+  # ~30-day retention pruning; the usage-archive service is the only writer.
+  mongo:
+    image: mongodb/mongodb-atlas-local:8
+    container_name: mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+    ports:
+      # 37017 on the host (27017 is already taken locally); loopback-only,
+      # for mongosh/Compass debugging.
+      - "127.0.0.1:37017:27017"
+
+  # Ingests ALL ~/.claude data (transcripts incl. subagents, stats-cache,
+  # history, metrics events) into Mongo every minute and serves the
+  # "Claude Code Archive (Mongo)" dashboard from it on :3002.
+  usage-archive:
+    build: ./usage-archive
+    container_name: usage-archive
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    volumes:
+      - ${HOME}/.claude:/data/claude:ro
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/usage_archive?directConnection=true
+      - CLAUDE_DIR=/data/claude
+      - SCAN_INTERVAL_SECONDS=60
+      - PRICING_REFRESH_HOURS=6
+      - PRICE_1H_PREMIUM=1
+      - BUCKET_TZ=UTC
+    ports:
+      - "3002:3002"
+
 volumes:
   grafana-storage:
   prometheus-data:
+  mongo-data:
+  mongo-config:

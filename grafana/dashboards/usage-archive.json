@@ -1,0 +1,657 @@
+{
+  "annotations": { "list": [] },
+  "description": "Usage served from the MongoDB archive (usage-archive service). Ingests ALL ~/.claude transcript data — including subagents — every minute, so history survives Claude Code's ~30-day retention. Costs are computed from dated LiteLLM pricing snapshots: past usage keeps the price in effect at the time.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "title": "Claude Code Live (OTel)",
+      "type": "link",
+      "url": "/d/claude-otel",
+      "icon": "dashboard"
+    },
+    {
+      "title": "Claude Code Stats (ccusage)",
+      "type": "link",
+      "url": "/d/ccusage-stats",
+      "icon": "dashboard"
+    }
+  ],
+  "liveNow": true,
+  "templating": {
+    "list": [
+      {
+        "name": "model",
+        "label": "Model",
+        "type": "query",
+        "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+        "definition": "usage-archive model names",
+        "query": {
+          "queryType": "infinity",
+          "infinityQuery": {
+            "refId": "variable",
+            "type": "json",
+            "source": "url",
+            "format": "table",
+            "url": "http://usage-archive:3002/model-names",
+            "url_options": { "method": "GET" },
+            "root_selector": "",
+            "columns": [{ "selector": ".", "text": "model", "type": "string" }]
+          }
+        },
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": "all",
+        "multi": false,
+        "current": { "text": "All", "value": "$__all", "selected": true },
+        "options": [],
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 13,
+      "type": "gauge",
+      "title": "Burn Rate (tokens/min)",
+      "description": "Rolling 1-hour average token rate across the selected model(s). Independent of the dashboard time range.",
+      "gridPos": { "h": 6, "w": 4, "x": 0, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/burnrate?model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "tokensPerMinute", "text": "tokens/min", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 1000000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 300000 },
+              { "color": "red", "value": 700000 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 14,
+      "type": "gauge",
+      "title": "Cost / hour",
+      "description": "Spend over the last rolling hour across the selected model(s). Independent of the dashboard time range.",
+      "gridPos": { "h": 6, "w": 4, "x": 4, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/burnrate?model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "costPerHour", "text": "$/hour", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 30 },
+              { "color": "red", "value": 60 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Tokens",
+      "gridPos": { "h": 6, "w": 4, "x": 8, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/summary?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "totalTokens", "text": "Total Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "red" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Input Tokens",
+      "gridPos": { "h": 6, "w": 3, "x": 12, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/summary?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "inputTokens", "text": "Input Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "blue" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Output Tokens",
+      "gridPos": { "h": 6, "w": 3, "x": 15, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/summary?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "outputTokens", "text": "Output Tokens", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "green" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Cache Read",
+      "gridPos": { "h": 6, "w": 3, "x": 18, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/summary?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "cacheReadTokens", "text": "Cache Read", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "purple" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Total Cost",
+      "gridPos": { "h": 6, "w": 3, "x": 21, "y": 0 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/summary?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [{ "selector": "totalCost", "text": "Total Cost", "type": "number" }]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD", "color": { "mode": "fixed", "fixedColor": "orange" } },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "piechart",
+      "title": "Token Distribution by Type",
+      "gridPos": { "h": 9, "w": 6, "x": 0, "y": 6 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/types?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "type", "text": "type", "type": "string" },
+            { "selector": "tokens", "text": "tokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "donut",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 8,
+      "type": "piechart",
+      "title": "Tokens by Model",
+      "gridPos": { "h": 9, "w": 6, "x": 6, "y": 6 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/models?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "model", "type": "string" },
+            { "selector": "totalTokens", "text": "totalTokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "pie",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 10,
+      "type": "piechart",
+      "title": "Tokens by Source (main / subagent)",
+      "description": "Split from the transcript archive: main-session vs subagent usage. See the agent-type panel below for the per-agent breakdown. Unlike the OTel query_source pie, auxiliary background calls never reach the transcripts.",
+      "gridPos": { "h": 9, "w": 6, "x": 12, "y": 6 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/sources?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "source", "text": "source", "type": "string" },
+            { "selector": "tokens", "text": "tokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "pie",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 12,
+      "type": "piechart",
+      "title": "Cost by Model",
+      "gridPos": { "h": 9, "w": 6, "x": 18, "y": 6 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/models?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "model", "type": "string" },
+            { "selector": "cost", "text": "cost", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD", "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } } },
+        "overrides": []
+      },
+      "options": {
+        "pieType": "pie",
+        "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": true },
+        "legend": { "displayMode": "table", "placement": "bottom", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Token Throughput by Type (tokens/min)",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 15 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/throughput?from=${__from}&to=${__to}&groupBy=type&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "time", "text": "time", "type": "timestamp" },
+            { "selector": "group", "text": "group", "type": "string" },
+            { "selector": "tokensPerMin", "text": "tokens/min", "type": "number" }
+          ]
+        }
+      ],
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": { "fields": ["group"], "keepFields": false, "naming": { "asLabels": true } }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "showPoints": "never",
+            "lineWidth": 1,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Token Throughput by Model (tokens/min)",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 15 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/throughput?from=${__from}&to=${__to}&groupBy=model&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "time", "text": "time", "type": "timestamp" },
+            { "selector": "group", "text": "group", "type": "string" },
+            { "selector": "tokensPerMin", "text": "tokens/min", "type": "number" }
+          ]
+        }
+      ],
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": { "fields": ["group"], "keepFields": false, "naming": { "asLabels": true } }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "showPoints": "never",
+            "lineWidth": 1,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
+      "id": 9,
+      "type": "table",
+      "title": "Usage by Model",
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 24 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/models?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "Model", "type": "string" },
+            { "selector": "totalTokens", "text": "Total Tokens", "type": "number" },
+            { "selector": "inputTokens", "text": "Input", "type": "number" },
+            { "selector": "outputTokens", "text": "Output", "type": "number" },
+            { "selector": "cacheReadTokens", "text": "Cache Read", "type": "number" },
+            { "selector": "cacheCreationTokens", "text": "Cache Write", "type": "number" },
+            { "selector": "cost", "text": "Cost", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "align": "auto" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Cost" },
+            "properties": [{ "id": "unit", "value": "currencyUSD" }]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "displayName": "Total Tokens", "desc": true }]
+      }
+    },
+    {
+      "id": 15,
+      "type": "barchart",
+      "title": "Tokens by Agent Type",
+      "description": "Subagent usage broken down by agent type (from the subagents meta files).",
+      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 33 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/agent-types?from=${__from}&to=${__to}&model=${model}",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "agentType", "text": "agent type", "type": "string" },
+            { "selector": "tokens", "text": "tokens", "type": "number" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "palette-classic" } },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "legend": { "displayMode": "hidden", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Model Pricing (live, $/MTok)",
+      "description": "Latest LiteLLM pricing snapshot from Mongo. Snapshots are kept per date, so historical usage keeps the price in effect at the time.",
+      "gridPos": { "h": 9, "w": 16, "x": 8, "y": 33 },
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "http://usage-archive:3002/pricing",
+          "url_options": { "method": "GET" },
+          "root_selector": "",
+          "columns": [
+            { "selector": "model", "text": "Model", "type": "string" },
+            { "selector": "inputPerMTok", "text": "Input", "type": "number" },
+            { "selector": "outputPerMTok", "text": "Output", "type": "number" },
+            { "selector": "cacheWritePerMTok", "text": "Cache Write (5m)", "type": "number" },
+            { "selector": "cacheWrite1hPerMTok", "text": "Cache Write (1h)", "type": "number" },
+            { "selector": "cacheReadPerMTok", "text": "Cache Read", "type": "number" },
+            { "selector": "snapshotDate", "text": "Snapshot", "type": "string" }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "align": "auto" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "Input|Output|Cache.*" },
+            "properties": [
+              { "id": "unit", "value": "currencyUSD" },
+              { "id": "decimals", "value": 2 }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "displayName": "Model", "desc": false }]
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["claude-code", "archive", "mongo"],
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Claude Code Archive (Mongo)",
+  "uid": "usage-archive",
+  "version": 1
+}
