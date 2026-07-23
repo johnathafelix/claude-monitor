@@ -589,15 +589,38 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short", "color": { "mode": "palette-classic" } },
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": { "type": "linear" },
+            "axisCenteredZero": false,
+            "hideFrom": { "tooltip": false, "viz": false, "legend": false },
+            "thresholdsStyle": { "mode": "off" }
+          }
+        },
         "overrides": []
       },
       "options": {
         "orientation": "horizontal",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0,
         "showValue": "auto",
-        "legend": { "displayMode": "hidden", "placement": "bottom", "calcs": [] },
+        "stacking": "none",
+        "groupWidth": 0.7,
+        "barWidth": 0.97,
+        "barRadius": 0,
+        "fullHighlight": false,
+        "legend": { "showLegend": false, "displayMode": "hidden", "placement": "bottom", "calcs": [] },
         "tooltip": { "mode": "single", "sort": "none" }
-      }
+      },
+      "pluginVersion": "13.1.0"
     },
     {
       "id": 16,
