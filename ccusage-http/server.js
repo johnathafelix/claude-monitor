@@ -7,9 +7,14 @@
 // The per-minute view (`/blocks-series`) parses the raw JSONL logs directly and
 // buckets by minute, so history is available for any window (not just since the
 // bridge started) and there is no state to persist across restarts.
+//
+// ccusage applies --since/--until only after parsing every JSONL file, so
+// windowed commands run against a pruned copy of the logs (just the files
+// modified inside the window) instead of the full history.
 
 const http = require('node:http');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { execFile } = require('node:child_process');
 const { URL } = require('node:url');
@@ -75,9 +80,9 @@ function buildArgs(sub, { since, until, breakdown, active } = {}, offline) {
   return args;
 }
 
-function execCcusage(args) {
+function execCcusage(args, env) {
   return new Promise((resolve, reject) => {
-    execFile(BIN, args, { maxBuffer: 128 * 1024 * 1024, timeout: 60000 }, (err, stdout) => {
+    execFile(BIN, args, { env, maxBuffer: 128 * 1024 * 1024, timeout: 60000 }, (err, stdout) => {
       if (err) {
         return reject(err);
       }
@@ -91,35 +96,61 @@ function execCcusage(args) {
   });
 }
 
-async function runCcusage(sub, opts = {}) {
-  const key = JSON.stringify([sub, opts.since, opts.until, Boolean(opts.breakdown), Boolean(opts.active)]);
-  const now = Date.now();
-  const hit = cache.get(key);
+async function runCcusageUncached(sub, opts) {
+  const cutoffMs = pruneCutoffMs(sub, opts);
+  const prunedDir = cutoffMs ? buildPrunedConfigDir(cutoffMs) : null;
+  const env = prunedDir ? { ...process.env, CLAUDE_CONFIG_DIR: prunedDir } : undefined;
 
-  if (!opts.fresh && hit && now - hit.at < CACHE_TTL_MS) {
-    return hit.data;
-  }
+  try {
+    if (FORCE_OFFLINE) {
+      return await execCcusage(buildArgs(sub, opts, true), env);
+    }
 
-  let data;
-
-  if (FORCE_OFFLINE) {
-    data = await execCcusage(buildArgs(sub, opts, true));
-  } else {
     try {
-      data = await execCcusage(buildArgs(sub, opts, false));
+      return await execCcusage(buildArgs(sub, opts, false), env);
     } catch (err) {
       if (NO_FALLBACK) {
         throw err;
       }
 
       console.error(`live pricing failed for "${sub}", falling back to --offline:`, err.message);
-      data = await execCcusage(buildArgs(sub, opts, true));
+
+      return await execCcusage(buildArgs(sub, opts, true), env);
+    }
+  } finally {
+    if (prunedDir) {
+      fs.rmSync(prunedDir, { recursive: true, force: true });
     }
   }
+}
 
-  cache.set(key, { at: Date.now(), data });
+const inflight = new Map();
 
-  return data;
+async function runCcusage(sub, opts = {}) {
+  const key = JSON.stringify([sub, opts.since, opts.until, Boolean(opts.breakdown), Boolean(opts.active)]);
+  const hit = cache.get(key);
+
+  if (!opts.fresh && hit && Date.now() - hit.at < CACHE_TTL_MS) {
+    return hit.data;
+  }
+
+  // A dashboard refresh fires many panels at once; on a cache miss they share
+  // one ccusage run instead of spawning a process each.
+  let pending = inflight.get(key);
+
+  if (!pending) {
+    pending = runCcusageUncached(sub, opts)
+      .then((data) => {
+        cache.set(key, { at: Date.now(), data });
+
+        return data;
+      })
+      .finally(() => inflight.delete(key));
+
+    inflight.set(key, pending);
+  }
+
+  return pending;
 }
 
 function daily(query) {
@@ -306,6 +337,78 @@ function collectJsonlFiles(dir, sinceMs, out) {
       }
     }
   }
+}
+
+const PRUNE_TZ_MARGIN_MS = 24 * 60 * 60 * 1000;
+const ACTIVE_BLOCK_PRUNE_MS = 3 * 24 * 60 * 60 * 1000;
+const MAX_PRUNE_BYTES = 200 * 1024 * 1024;
+
+// Earliest mtime a JSONL file can have and still hold entries the command
+// cares about. Daily-style reports get a day of margin so timezone differences
+// between Grafana, this container, and ccusage can't clip the window edge. An
+// active billing block spans at most the last 5h; three days is safely beyond
+// anything that can influence it. Null means "needs full history, don't prune".
+function pruneCutoffMs(sub, opts) {
+  if (sub === 'blocks') {
+    return opts.active ? Date.now() - ACTIVE_BLOCK_PRUNE_MS : null;
+  }
+
+  const from = sanitizeDate(opts.since);
+
+  if (!from) {
+    return null;
+  }
+
+  const digits = from.replace(/-/g, '');
+  const parsed = Date.parse(`${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}T00:00:00Z`);
+
+  return Number.isFinite(parsed) ? parsed - PRUNE_TZ_MARGIN_MS : null;
+}
+
+// Copy the JSONL files touched at/after `cutoffMs` into a throwaway config dir
+// so ccusage parses days of logs instead of the full history. Symlinks would be
+// cheaper, but ccusage's globber ignores them, so real copies it is. Returns
+// null (= run against the real logs) when the matched set is so large that
+// copying would cost more than the parse time it saves.
+function buildPrunedConfigDir(cutoffMs) {
+  const matched = [];
+  let bytes = 0;
+
+  for (const [index, root] of projectRoots().entries()) {
+    const files = [];
+
+    collectJsonlFiles(root, cutoffMs, files);
+
+    for (const file of files) {
+      try {
+        bytes += fs.statSync(file).size;
+      } catch {
+        continue;
+      }
+
+      if (bytes > MAX_PRUNE_BYTES) {
+        return null;
+      }
+
+      matched.push({ index, root, file });
+    }
+  }
+
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccusage-prune-'));
+
+  for (const { index, root, file } of matched) {
+    const dest = path.join(dir, 'projects', String(index), path.relative(root, file));
+
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+
+    try {
+      fs.copyFileSync(file, dest);
+    } catch {
+      // a session file may vanish mid-copy; ccusage just sees fewer logs
+    }
+  }
+
+  return dir;
 }
 
 // Per-minute token series built straight from the raw logs, deduped by
