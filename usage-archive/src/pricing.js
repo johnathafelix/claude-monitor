@@ -291,6 +291,7 @@ function latestTable() {
   }
 
   return [...latest.models.values()]
+    .filter((m) => m.key.startsWith('claude'))
     .map((m) => ({
       model: m.key,
       inputPerMTok: m.in * 1e6,
