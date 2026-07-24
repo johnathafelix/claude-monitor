@@ -79,7 +79,7 @@
             "mode": "fixed",
             "fixedColor": "red"
           },
-          "decimals": 0
+          "decimals": 2
         },
         "overrides": []
       },
@@ -129,7 +129,7 @@
             "mode": "fixed",
             "fixedColor": "blue"
           },
-          "decimals": 0
+          "decimals": 2
         },
         "overrides": []
       },
@@ -179,7 +179,7 @@
             "mode": "fixed",
             "fixedColor": "green"
           },
-          "decimals": 0
+          "decimals": 2
         },
         "overrides": []
       },
@@ -229,7 +229,7 @@
             "mode": "fixed",
             "fixedColor": "purple"
           },
-          "decimals": 0
+          "decimals": 2
         },
         "overrides": []
       },
