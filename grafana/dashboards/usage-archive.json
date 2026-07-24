@@ -568,8 +568,8 @@
     {
       "id": 15,
       "type": "barchart",
-      "title": "Tokens by Agent Type",
-      "description": "Subagent usage broken down by agent type (from the subagents meta files).",
+      "title": "Top 10 Agent Types by Tokens",
+      "description": "Subagent usage broken down by agent type (from the subagents meta files). The API returns every agent type sorted by tokens descending; only the top 10 are charted so the labels stay readable over long time ranges.",
       "gridPos": { "h": 9, "w": 8, "x": 0, "y": 33 },
       "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "infinity-usage-archive" },
       "targets": [
@@ -588,6 +588,7 @@
           ]
         }
       ],
+      "transformations": [{ "id": "limit", "options": { "limitField": 10 } }],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
