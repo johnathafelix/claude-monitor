@@ -79,9 +79,14 @@
             "mode": "fixed",
             "fixedColor": "red"
           },
-          "decimals": 2
+          "decimals": 0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": {
@@ -129,9 +134,14 @@
             "mode": "fixed",
             "fixedColor": "blue"
           },
-          "decimals": 2
+          "decimals": 0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": {
@@ -179,9 +189,14 @@
             "mode": "fixed",
             "fixedColor": "green"
           },
-          "decimals": 2
+          "decimals": 0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": {
@@ -229,9 +244,14 @@
             "mode": "fixed",
             "fixedColor": "purple"
           },
-          "decimals": 2
+          "decimals": 0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": {

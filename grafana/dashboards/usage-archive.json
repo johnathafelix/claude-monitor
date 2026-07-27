@@ -157,8 +157,13 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "si:", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "red" } },
-        "overrides": []
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "red" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
@@ -189,8 +194,13 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "si:", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "blue" } },
-        "overrides": []
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "blue" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
@@ -221,8 +231,13 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "si:", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "green" } },
-        "overrides": []
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "green" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
@@ -253,8 +268,13 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "si:", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "purple" } },
-        "overrides": []
+        "defaults": { "unit": "si:", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "purple" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byValue", "options": { "reducer": "lastNotNull", "op": "gte", "value": 1000 } },
+            "properties": [{ "id": "decimals", "value": 2 }]
+          }
+        ]
       },
       "options": {
         "reduceOptions": { "calc": "lastNotNull", "fields": "", "values": false },
