@@ -15,7 +15,7 @@ Plus a live, per-minute view with burn-rate and cost-per-hour gauges:
 - **`ccusage-http`** — a tiny Node bridge that runs `ccusage` against your
   `~/.claude` logs and republishes the results as JSON on port `3001`.
 - **`grafana`** — Grafana with the Infinity datasource plugin, pre-provisioned
-  with a datasource and the `ccusage` dashboard, on port `3000`.
+  with a datasource and the `ccusage` dashboard, on port `3035`.
 - **`otel-collector` + `prometheus`** — an OTLP sink (gRPC `4317` / HTTP `4318`)
   for Claude Code's built-in OpenTelemetry export, scraped by Prometheus and
   shown on the **Claude Code Live (OTel)** dashboard. Unlike the transcript
@@ -127,7 +127,7 @@ cd claude-monitor
 docker compose up -d
 ```
 
-Then open **http://localhost:3000** (login `admin` / `admin`) and pick the
+Then open **http://localhost:3035** (login `admin` / `admin`) and pick the
 **ccusage** dashboard.
 
 To stop: `docker compose down` (add `-v` to also wipe Grafana's stored state).

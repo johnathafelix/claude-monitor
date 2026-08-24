@@ -57,7 +57,7 @@ services:
       - ccusage-http
       - prometheus
     ports:
-      - "3000:3000"
+      - "3035:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
