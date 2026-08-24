@@ -6,5 +6,8 @@
 .code-review-graph/
 tasks/
 
+# Local mongo backups (mongodump output, machine-specific)
+mongo-backup-*/
+
 # Editor
 .vscode/
